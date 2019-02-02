@@ -2,14 +2,16 @@
 
 #include "ofMain.h"
 #include <opencv2/opencv.hpp>
+#include "Sequencer.hpp"
 
 class ofApp : public ofBaseApp{
     
-    ofSoundPlayer sound;
+//    ofSoundPlayer sound;
     ofVideoGrabber grabber; // カメラの情報を受けとる受け皿
     vector<vector<cv::Point>> contours;
     cv::Mat canvas; // 色情報の保存用
     cv::Mat output; // 結果画像をいれるいれもの
+    Sequencer sequencer;
 
 	public:
 		void setup();

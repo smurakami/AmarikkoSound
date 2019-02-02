@@ -31,8 +31,8 @@ void ofApp::setup(){
     // -----------------------------------
     // 音関連のセットアップ
     //
-    // 音色をあらかじめロードしておく。
-    sound.load("sound.wav");
+
+    sequencer.setup();
 }
 
 //--------------------------------------------------------------
@@ -71,7 +71,7 @@ void ofApp::update(){
     //                                                           一番精密に抽出
     
 //    return cv::Mat(pix.getHeight(), pix.getWidth(), CV_MAKETYPE(depth, pix.getNumChannels()), pix.getData(), 0);
-    canvas = cv::Mat(image.size(), CV_MAKETYPE(image.depth(), image.channels()), cv::Scalar(255, 255, 255, 255));
+    canvas = cv::Mat(image.size(), CV_MAKETYPE(image.depth(), image.channels()), cv::Scalar(0, 0, 0));
     const float full_area = ofGetHeight() * ofGetWidth();
     
     for (vector<cv::Point> contour : contours ) {
@@ -81,26 +81,28 @@ void ofApp::update(){
 
         vector<vector<cv::Point>> pts = {contour};
 
-//        cv::Point * cts[1] = {contour};
-//        int ss[] = {(int)contour.size()};
         cv::fillPoly(canvas, pts, cv::Scalar(color.r, color.g, color.b));
-
-//        cv::fillPoly(canvas, cts, ss, 1, cv::Scalar(color.b, color.g, color.r));
-//        cv::fillPoly(<#Mat &img#>, <#const Point **pts#>, <#const int *npts#>, <#int ncontours#>, <#const Scalar &color#>)
     }
     
     output = canvas;
-//    cv::drawContours(output, contours, -1, {0, 255, 0});
+    
+    
+    sequencer.update(canvas);
+    
     return;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    // 結果の表示
+    ofSetColor(255, 255, 255, 255);
+    // 画像認識結果の表示
     ofImage img; // キャンバス
     ofxCv::toOf(output, img); // キャンバスにデータをいれる
     img.update(); // 一回アップデート
     img.draw(0, 0); //　描画
+//    cv::drawContours(output, contours, -1, {0, 255, 0});
+    
+    sequencer.draw();
 }
 
 //--------------------------------------------------------------
