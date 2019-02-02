@@ -95,13 +95,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofSetColor(255, 255, 255, 255);
+    cv::drawContours(output, contours, -1, {0, 255, 0});
     // 画像認識結果の表示
     ofImage img; // キャンバス
     ofxCv::toOf(output, img); // キャンバスにデータをいれる
     img.update(); // 一回アップデート
     img.draw(0, 0); //　描画
-//    cv::drawContours(output, contours, -1, {0, 255, 0});
-    
+
     sequencer.draw();
 }
 

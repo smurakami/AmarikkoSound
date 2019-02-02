@@ -14,10 +14,10 @@ void Sequencer::setup() {
         ofSoundPlayer sound;
         sound.load("sound.wav");
         
-        float speed = (num_notes - i) / num_notes * 2.0;
+        float speed = (num_notes - i) / float(num_notes) * 2.0;
         sound.setSpeed(speed);
         
-        sounds[i] = sound;
+        sounds.push_back(sound);
     }
 }
 
@@ -36,7 +36,6 @@ void Sequencer::update(cv::Mat canvas) {
 }
 
 void Sequencer::playSound() {
-
     float width = canvas.cols;
     float height = canvas.rows;
     float cell_width = width / (float)num_bars;
