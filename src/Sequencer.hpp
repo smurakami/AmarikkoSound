@@ -14,11 +14,14 @@
 
 class Sequencer {
     vector<ofSoundPlayer> sounds;
+    vector<ofSoundPlayer> rythm;
     float start_time; // 開始時間。
     
-    int num_bars = 16; // 一小節の拍数
+    int num_bars = 32; // 一小節の拍数
     int num_notes = 16; // 音階の数
-    int tempo = 120 * 2; // テンポ
+    
+    int counter = 0; // 時間計測用
+    int beat = 4; // 一拍のフレーム数
     
     int pos = 0; // 譜面上の横位置
     bool trigger = false; // 音を鳴らすか

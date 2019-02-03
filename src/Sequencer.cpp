@@ -22,27 +22,79 @@ int notes_in_octave[notes_in_octave_num] = {
     9  // ラ
 };
 
-void Sequencer::setup() {
-    start_time = ofGetElapsedTimef();
+const int rythm_loop_num = 16;
+
+enum RythmKind {
+    RYTHM_CHI = 0,
+    RYTHM_SHAN = 1,
+    RYTHM_TAN = 2,
+};
+
+char rythm_filename[3][20] = {
+    "chi.WAV",
+    "shan.WAV",
+    "tan.WAV"
+};
+
+int rythm_loop[rythm_loop_num] = {
+    RYTHM_CHI,
+    RYTHM_CHI,
+    RYTHM_CHI,
+    RYTHM_SHAN,
     
+    RYTHM_CHI,
+    RYTHM_CHI,
+    RYTHM_TAN,
+    RYTHM_CHI,
+    
+    RYTHM_CHI,
+    RYTHM_CHI,
+    RYTHM_CHI,
+    RYTHM_SHAN,
+    
+    RYTHM_CHI,
+    RYTHM_CHI,
+    RYTHM_TAN,
+    RYTHM_TAN,
+};
+
+
+
+void Sequencer::setup() {
+    // 音階楽器のセットアップ
     for (int i = 0; i < num_notes; i++) {
         ofSoundPlayer sound;
         sound.load("sound.wav");
         
         int note_index = num_notes - i;
         int note = (note_index / notes_in_octave_num) * 12 + notes_in_octave[note_index % notes_in_octave_num];
+        
+        note -= 12 * 3; // 4オクターブくらい下げておく。
+        
         float speed = note2speed(note);
         sound.setSpeed(speed);
         
         sounds.push_back(sound);
+    }
+    
+    // リズム楽器のセットアップ
+    
+    for (int i = 0; i < rythm_loop_num; i++) {
+        ofSoundPlayer sound;
+        
+        int rythm_kind = rythm_loop[i];
+        char* filename = rythm_filename[rythm_kind];
+        
+        sound.load(filename);
+        
+        rythm.push_back(sound);
     }
 }
 
 void Sequencer::update(cv::Mat canvas) {
     this->canvas = canvas;
 
-    float time = ofGetElapsedTimef() - start_time;
-    int next_pos = (int)(time * (tempo / 60.0)) % num_bars;
+    int next_pos = (counter / beat) % num_bars;
     
     trigger = next_pos != pos;
     pos = next_pos;
@@ -50,6 +102,8 @@ void Sequencer::update(cv::Mat canvas) {
     if (trigger) { // 次の拍に移ってたら
         playSound();
     }
+    
+    counter++;
 }
 
 void Sequencer::playSound() {
@@ -69,9 +123,17 @@ void Sequencer::playSound() {
         int b = channel[2];
         
         if (r + g + b > 0) {
-            sounds[i].play();
+            ofColor color(r, g, b);
+            float hue = color.getHue();
+            if (hue < 255 / 3) { // 赤なら
+                sounds[i].play();
+            } else if (hue < 255 / 3 * 2) { // 緑？
+            } else {
+            }
         }
     }
+    
+    rythm[pos % rythm_loop_num].play();
 }
 
 void Sequencer::draw() {
