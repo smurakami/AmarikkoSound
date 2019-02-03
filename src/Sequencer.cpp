@@ -7,6 +7,21 @@
 
 #include "Sequencer.hpp"
 
+// 12段階の音階を再生速度に変換する。
+static float note2speed(int note) {
+    // 12音上で2倍
+    return pow(2, note / 12.0);
+}
+
+const int notes_in_octave_num = 5;
+int notes_in_octave[notes_in_octave_num] = {
+    0, // ド
+    2, // レ
+    5, // ファ
+    7, // ソ
+    9  // ラ
+};
+
 void Sequencer::setup() {
     start_time = ofGetElapsedTimef();
     
@@ -14,7 +29,9 @@ void Sequencer::setup() {
         ofSoundPlayer sound;
         sound.load("sound.wav");
         
-        float speed = (num_notes - i) / float(num_notes) * 2.0;
+        int note_index = num_notes - i;
+        int note = (note_index / notes_in_octave_num) * 12 + notes_in_octave[note_index % notes_in_octave_num];
+        float speed = note2speed(note);
         sound.setSpeed(speed);
         
         sounds.push_back(sound);
